@@ -4,15 +4,18 @@
       <router-link title="Página inicial" to="/">Viralata</router-link>
     </h1>
 
-    <input type="checkbox" id="control-nav" />
+    <input type="checkbox" id="control-nav" @change="showMenu" :checked="openMenu" />
     <label for="control-nav" class="control-nav"></label>
     <label for="control-nav" class="control-nav-close"></label>
 
     <nav class="float-r">
       <ul class="list-auto">
         <li>
-          <span v-if="auth">{{user}}</span>
-          <router-link v-if="!auth" to="/login">Login</router-link>
+          <span v-if="auth">{{user.name}}</span>
+          <router-link @click.native="closeMenu" v-if="!auth" to="/login">Login</router-link>
+        </li>
+        <li v-if="auth">
+          <router-link @click.native="closeMenu" to="/fairs">Feiras</router-link>
         </li>
       </ul>
     </nav>
@@ -22,12 +25,23 @@
 <script>
 export default {
   name: 'NMAHeader',
+  methods: {
+    closeMenu () {
+      this.$store.commit('switchMenu', false)
+    },
+    showMenu () {
+      this.$store.commit('switchMenu', true)
+    }
+  },
   computed: {
     auth () {
       return this.$store.getters.isAuthenticated
     },
     user () {
-      return this.$store.getters.user.name
+      return this.$store.getters.user
+    },
+    openMenu () {
+      return this.$store.getters.openMenu
     }
   }
 }
